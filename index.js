@@ -1,58 +1,36 @@
-require('dotenv').config();
-const { default: makeWASocket, useMultiFileAuthState, makeCacheableSignalKeyStore, fetchLatestBaileysVersion } = require('@adiwajshing/baileys');
-const Pino = require('pino');
-const { Boom } = require('@hapi/boom');
-const readline = require("readline");
+// index.js
+import 'dotenv/config'
+import express from 'express'
+import makeWASocket, { useMultiFileAuthState } from '@adiwajshing/baileys'
 
-async function connectBot() {
-  const { state, saveCreds } = await useMultiFileAuthState('./session');
-  const { version } = await fetchLatestBaileysVersion();
+const PORT = process.env.PORT || 3000
+const PHONE_NUMBER = process.env.PHONE_NUMBER // eg: +919496123456
+
+// express server for Render/Fly.io to detect port
+const app = express()
+app.get('/', (req, res) => res.send('✅ Dragon-MD Bot is Live'))
+app.listen(PORT, () => console.log(`🌐 Listening on port ${PORT}`))
+
+// WhatsApp connection
+async function startBot() {
+  const { state, saveCreds } = await useMultiFileAuthState('auth_info')
 
   const sock = makeWASocket({
-    version,
-    printQRInTerminal: false,
-    auth: {
-      creds: state.creds,
-      keys: makeCacheableSignalKeyStore(state.keys, Pino({ level: "silent" }))
-    },
-    browser: ['Hermit-MD', 'Chrome', '4.0.0'],
-    logger: Pino({ level: 'silent' })
-  });
+    auth: state,
+    printQRInTerminal: true, // shows pair code if unpaired
+    defaultQueryTimeoutMs: undefined,
+  })
 
-  // Pairing Code login
-  if (!sock.authState.creds.registered) {
-    const phoneNumber = await askQuestion('📱 Enter your WhatsApp number (with country code): ');
-    const code = await sock.requestPairingCode(phoneNumber.trim());
-    console.log(`\n🔗 Pairing Code: ${code}\n👉 Open WhatsApp > Linked Devices > Link with Code`);
-  }
+  sock.ev.on('creds.update', saveCreds)
 
-  sock.ev.on('creds.update', saveCreds);
-
-  sock.ev.on('connection.update', (update) => {
-    const { connection, lastDisconnect } = update;
-    if (connection === 'close') {
-      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
-      console.log('📴 Connection closed. Reconnecting...', shouldReconnect);
-      if (shouldReconnect) connectBot();
-    } else if (connection === 'open') {
-      console.log('✅ BOT Connected successfully!');
+  sock.ev.on('connection.update', ({ connection, qr, lastDisconnect, isNewLogin }) => {
+    if (connection === 'open') {
+      console.log('✅ WhatsApp Connected as', sock.user.id)
+    } else if (connection === 'close') {
+      console.log('❌ Connection closed. Retrying...')
+      startBot()
     }
-  });
-
-  sock.ev.on('messages.upsert', async (m) => {
-    console.log(JSON.stringify(m, null, 2));
-  });
+  })
 }
 
-function askQuestion(query) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  return new Promise(resolve => rl.question(query, ans => {
-    rl.close();
-    resolve(ans);
-  }))
-}
-
-connectBot();
+startBot()

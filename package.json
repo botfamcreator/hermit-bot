@@ -1,7 +1,7 @@
 {
-  "name": "baileys-paircode-bot",
+  "name": "dragon-md",
   "version": "1.0.0",
-  "description": "WhatsApp bot with pair code login using Baileys",
+  "description": "Simple WhatsApp bot using Baileys (pair code)",
   "main": "index.js",
   "type": "module",
   "scripts": {

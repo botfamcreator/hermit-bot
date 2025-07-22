@@ -4,10 +4,8 @@ import {
   makeWASocket,
   useMultiFileAuthState,
   DisconnectReason,
-  fetchLatestBaileysVersion,
-  makeCacheableSignalKeyStore
+  fetchLatestBaileysVersion
 } from '@whiskeysockets/baileys'
-import { DisconnectReasonMap } from '@whiskeysockets/baileys/lib/Types'
 
 const PORT = process.env.PORT || 8000
 
@@ -22,7 +20,7 @@ async function startBot() {
   const sock = makeWASocket({
     version,
     auth: state,
-    printQRInTerminal: false, // No QR needed
+    printQRInTerminal: false,
     getMessage: async () => ({ conversation: '🟢 Fallback' })
   })
 
@@ -37,7 +35,6 @@ async function startBot() {
       console.log('❌ Connection closed. Reconnecting?', shouldReconnect)
       if (shouldReconnect) startBot()
     } else if (isNewLogin) {
-      // Important: Shows 6-digit pair code
       setTimeout(async () => {
         const code = await sock.requestPairingCode(process.env.PHONE_NUMBER)
         console.log(`🔑 Pair this bot via WhatsApp: ${code}`)

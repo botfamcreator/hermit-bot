@@ -1,15 +1,14 @@
 {
-  "name": "hermit-md",
-  "version": "4.5.0",
+  "name": "baileys-paircode-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp bot with pair code login using Baileys",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js"
   },
-  "type": "module",
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.8",
-    "@hapi/boom": "^10.0.1",
-    "pino": "^8.0.0",
-    "express": "^4.18.2"
+    "@whiskeysockets/baileys": "^6.6.0",
+    "pino": "^8.0.0"
   }
 }

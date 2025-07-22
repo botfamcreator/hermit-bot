@@ -1,11 +1,2 @@
-const client = require('./lib/client')
-
-const connect = async () => {
-	try {
-		await client.connect()
-	} catch (error) {
-		console.error(error)
-	}
-}
-
-connect()
+console.log('Hermit-bot started successfully!');
+// If needed, add other startup logic here

@@ -10,7 +10,7 @@
   "author": "A-d-i-t-h-y-a-n",
   "license": "ISC",
   "dependencies": {
-    "@adiwajshing/baileys": "github:adiwajshing/baileys",
+    "@adiwajshing/baileys": "https://github.com/adiwajshing/baileys.git",
     "browser-id3-writer": "^5.0.0",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.4.5",

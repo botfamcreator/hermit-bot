@@ -1,8 +1,9 @@
 {
   "name": "hermit-md",
   "version": "4.4.6",
-  "description": "Hermit-md - Simple whatsapp Multi Device bot based on @adiwajshing/baileys.",
+  "description": "Hermit-md - Simple WhatsApp Multi Device bot using baileys.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "PIDUSAGE_SILENT=true pm2 start . --attach --name hermit-md",
     "dev": "node index.js"
@@ -10,8 +11,8 @@
   "author": "A-d-i-t-h-y-a-n",
   "license": "ISC",
   "dependencies": {
+    "baileys": "^6.7.18",
     "express": "^4.19.2",
-    "@adiwajshing/baileys": "^6.7.8",
     "browser-id3-writer": "^5.0.0",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.4.5",
